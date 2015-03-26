@@ -41,11 +41,7 @@ var move = {
 			}
 		}
 	},
-	every: function(obj, fn){
-		var i;
-		for(i in obj) if( !fn.call(obj[i], i, obj[i], obj) ) return false;
-		return true;
-	},
+	//初始化
 	init: function(obj, json, time){
 		if( !obj.ani ){
 			obj.ani = {};				  //动画对象
@@ -77,7 +73,7 @@ var move = {
 			obj.ani.d[attr] = 0;
 		}
 	},
-
+	//ease-in-out 先加速,后减速
 	ease: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
@@ -113,7 +109,8 @@ var move = {
 			if( obj.aniOver && fn ) fn.call(obj);
 		}, obj.ani.interval);
 	},
-
+	
+	//缓冲动画, 初速度较大,一直减速
 	easeOut: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
@@ -141,7 +138,7 @@ var move = {
 			if( obj.aniOver && fn ) fn.call(obj);
 		}, obj.ani.interval);
 	},
-
+	//碰撞动画
 	collision: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
@@ -179,7 +176,7 @@ var move = {
 			if( obj.aniOver && fn ) fn.call(obj);
 		}, obj.ani.interval);
 	},
-
+	//弹性动画
 	elastic: function(obj, json, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json);
