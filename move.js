@@ -187,15 +187,12 @@ var move = {
 			obj.ani.v[attr] = 0*obj.ani.va[attr];
 			factor[attr] = 0.06;
 		}
-		//console.log(obj.ani.v)
 		obj.ani.timer = setInterval(function(){
 			obj.ani.t++;
-			console.log(obj.ani.d)
 			for( attr in obj.ani.st ){
 				obj.ani.a[attr] = (obj.ani.dis[attr] - obj.ani.d[attr])*factor[attr];
 				obj.ani.v[attr] += obj.ani.a[attr];
 				obj.ani.v[attr] *= 0.8;
-			//	obj.ani.v[attr] = obj.ani.v[attr] > 0 ? Math.ceil(obj.ani.v[attr]) : Math.floor(obj.ani.v[attr]);
 				obj.ani.d[attr] += obj.ani.v[attr];
 				obj.ani.res[attr] = obj.ani.s0[attr] + obj.ani.d[attr];
 
