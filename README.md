@@ -5,7 +5,7 @@ move.js是一个js动画库, 内部包含ease(先加速后减速), easeOut(缓�
 直接引入```<script src="move.js" type="text/javascript"></script>```
 
 ###使用方法
-* ease, easeOut, collision : 
+#### ease, easeOut, collision : 
 ```
 move.ease(obj, {left:200, width:"400px"}, 1000, function(){
   alert("动画结束");
@@ -14,7 +14,7 @@ move.ease(obj, {left:200, width:"400px"}, 1000, function(){
 上面例子中```obj```是传入的dom元素, 传入值(有无px均可), ```1000```代表1000ms的时间, 然后是动画完成之后执行的回调函数(可不传), 如果不传入回调函数, 时间可省掉(默认500ms), 若要传入回调函数, 则必须设置时间.
 
 
-* elastic动画有点不同, 它不需要设置时间, 用法如下:
+#### elastic动画有点不同, 它不需要设置时间, 用法如下:
 ```
 move.elastic(obj, {left: 800, top: 300}, function(){
   alert("动画完成");
