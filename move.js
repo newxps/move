@@ -156,6 +156,7 @@ var move = {
 			for( attr in obj.ani.st ){
 				if( obj.ani.d[attr] === obj.ani.dis[attr] ) obj.ani.v[attr]*=-0.5;
 				obj.ani.v[attr] += obj.ani.a[attr];
+				obj.ani.v[attr] *= 0.999;
 				temp = obj.ani.dis[attr] - obj.ani.d[attr];
 				if( temp*obj.ani.v[attr] > 0 && Math.abs(temp) < Math.abs(obj.ani.v[attr]) ){
 					obj.ani.d[attr] += temp;
