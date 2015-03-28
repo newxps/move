@@ -41,10 +41,9 @@ var move = {
 			}
 		}
 	},
-	//初始化
 	init: function(obj, json, time){
 		if( !obj.ani ){
-			obj.ani = {};				  //动画对象
+			obj.ani = {};				//动画对象
 			obj.ani.s0 = {},			//当前值
 			obj.ani.st = {},			//目标值
 			obj.ani.dis = {},			//目标值和起始值距离			
@@ -58,7 +57,7 @@ var move = {
 		obj.ani.time = time || 500;
 		obj.ani.interval = 13;
 		obj.ani.total = Math.ceil( obj.ani.time/obj.ani.interval );		//定时器总次数
-		obj.ani.t = 0;			//当前次数
+		obj.ani.t = 0;					//当前次数
 
 
 		//如果第一次动画还没结束第二次就开始了, 就将第二次的json属性传入obj.ani.st(第一次的还在)
@@ -73,7 +72,7 @@ var move = {
 			obj.ani.d[attr] = 0;
 		}
 	},
-	//ease-in-out 先加速,后减速
+
 	ease: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
@@ -103,14 +102,17 @@ var move = {
 					clearInterval(obj.ani.timer);
 					obj.aniOver = true;
 					break;
-				} 
+				}
 			}
 			move.css(obj, obj.ani.res);
-			if( obj.aniOver && fn ) fn.call(obj);
+			if( obj.aniOver ){
+				obj.ani.st = {};
+				obj.ani.res = {};
+				if( typeof fn === "function" ) fn.call(obj);
+			}
 		}, obj.ani.interval);
 	},
-	
-	//缓冲动画, 初速度较大,一直减速
+
 	easeOut: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
@@ -135,14 +137,17 @@ var move = {
 				}
 			}
 			move.css(obj, obj.ani.res);
-			if( obj.aniOver && fn ) fn.call(obj);
+			if( obj.aniOver ){
+				obj.ani.st = {};
+				obj.ani.res = {};
+				if( typeof fn === "function" ) fn.call(obj);
+			}
 		}, obj.ani.interval);
 	},
-	//碰撞动画
+
 	collision: function(obj, json, time, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json, time);
-
 		var attr, This = this, temp;
 		//因为每一种动画的初始速度, 最大速度, 加速度不同, 所以这三个单独设置
 		for( attr in obj.ani.st ){
@@ -154,6 +159,7 @@ var move = {
 			obj.ani.t++;
 
 			for( attr in obj.ani.st ){
+				console.log(obj.ani.st)
 				if( obj.ani.d[attr] === obj.ani.dis[attr] ) obj.ani.v[attr]*=-0.5;
 				obj.ani.v[attr] += obj.ani.a[attr];
 				obj.ani.v[attr] *= 0.999;
@@ -174,10 +180,14 @@ var move = {
 				}
 			}
 			move.css(obj, obj.ani.res);
-			if( obj.aniOver && fn ) fn.call(obj);
+			if( obj.aniOver ){
+				obj.ani.st = {};
+				obj.ani.res = {};
+				if( typeof fn === "function" ) fn.call(obj);
+			}
 		}, obj.ani.interval);
 	},
-	//弹性动画
+
 	elastic: function(obj, json, fn){
 		if( obj.aniOver === false ) clearInterval(obj.ani.timer);
 		this.init(obj, json);
@@ -194,6 +204,7 @@ var move = {
 				obj.ani.a[attr] = (obj.ani.dis[attr] - obj.ani.d[attr])*factor[attr];
 				obj.ani.v[attr] += obj.ani.a[attr];
 				obj.ani.v[attr] *= 0.8;
+			//	obj.ani.v[attr] = obj.ani.v[attr] > 0 ? Math.ceil(obj.ani.v[attr]) : Math.floor(obj.ani.v[attr]);
 				obj.ani.d[attr] += obj.ani.v[attr];
 				obj.ani.res[attr] = obj.ani.s0[attr] + obj.ani.d[attr];
 
@@ -210,7 +221,11 @@ var move = {
 				}
 			}
 			move.css(obj, obj.ani.res);
-			if( obj.aniOver && typeof fn === "function" ) fn.call(obj);
+			if( obj.aniOver ){
+				obj.ani.st = {};
+				obj.ani.res = {};
+				if( typeof fn === "function" ) fn.call(obj);
+			}
 		}, obj.ani.interval);
 	}
 }
