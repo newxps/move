@@ -20,5 +20,18 @@ move.elastic(obj, {left: 800, top: 300}, function(){
   alert("动画完成");
 });
 ```
+
+#### common动画:
+common动画俗称万能动画, 一切包含数字的css样式的过渡皆可使用此方法实现动画.
+例如:
+```
+//实现一个从0到1的数值过渡, 过渡时间是1000毫秒, 内部动画曲线是ease, 每次会传入一个代表过渡完成值的小数到回调函数中
+move.common(0, 1, 1000, function(v){
+	//设置obj对象的css样式
+	obj.style.cssText = "...";
+})
+```
+
+
 ###许可协议
 基于 MIT 协议, 任何用途(包括商用)皆可, [LICENSE](https://github.com/flfwzgl/move.js/blob/master/LICENSE)
