@@ -32,7 +32,7 @@ move.common(0, 1, 1000, function(v){
 	//设置obj对象的css样式
 	obj.style.cssText = "...";
 }, function(){
-	alert('over!');
+	alert('over');
 })
 ```
 
