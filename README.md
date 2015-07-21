@@ -5,7 +5,7 @@ move.js 是一个js运动库, 它只会生成move一个全局变量.
 注意: move.js中所有方法是万能的方法函数, 只要是含有数字的css样式皆可过渡, 如rotate, border等复杂属性, 直接获取到的css样式值不易提取数值进行过渡, 使用move.js可以解决, 因此move.js没有设计成傻瓜式的只直接传入包含终点值的字面量对象, 如```move.ease(element, {left: 800, top:600})```(错误用法)
 
 ###安装方法
-直接引入```<script src="move.js" type="text/javascript"></script>```
+直接引入```<script src="move.min.js" type="text/javascript"></script>```
 
 ###动画种类(还在添加......)
 ```
