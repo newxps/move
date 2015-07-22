@@ -1,4 +1,6 @@
 var move = {
+	//投射函数, 非动画函数
+	//传入组定义域和值域都可以是多元数组
 	project: function(x, domain, range){
 		if(domain.length !== range.length) return;
 		var len = domain.length;
@@ -91,7 +93,6 @@ var move = {
 			d += va;
 			res = from + d;
 			if( (va >= 0 && res >= to) || (va < 0 && res <= to) || t > total){
-				console.log(t+'/'+total)
 				clearInterval(timer);
 				res = to;
 				fn(res);
@@ -99,6 +100,7 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
+		return true;
 	},
 
 	easeIn: function(range, time, fn, fnEnd){
@@ -119,7 +121,6 @@ var move = {
 			d += v;
 			res = from + d;
 			if( (va >= 0 && res + v >= to) || (va < 0 && res + v <= to) || t > total){
-				console.log(t+'/'+total)
 				clearInterval(timer);
 				res = to;
 				fn(res);
@@ -127,6 +128,7 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
+		return true;
 	},
 
 	//easeOut动画(初速度较大, 一直减速)
@@ -150,10 +152,8 @@ var move = {
 			t++;
 			v += a;
 			d += v;
-			// console.log(res + '/' + to)
 			res = from + d;
 			if( (va >= 0 && res + v >= to) || (va < 0 && res + v <= to) || t > total){
-				console.log(t+'/'+total)
 				clearInterval(timer);
 				res = to;
 				fn(res);
@@ -188,7 +188,6 @@ var move = {
 			d += v;
 			res = from + d;
 			if( va >= 0 && res >= to || va < 0 && res <= to || t >= total ){
-				console.log(t+'/'+total)
 				clearInterval(timer);
 				res = to;
 				fn(res);
