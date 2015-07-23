@@ -63,15 +63,13 @@ move.ease([0, 1], 1000, function(v){
 	var btn = document.getElementById("btn");
 	var box = document.getElementById("box");
 
-	btn.onclick = function(){
-		if(box.stop) return;
+	btn.onmouseover = function(){
+		if(box.stop) box.stop();
 		box.stop = move.ease([box.offsetLeft, 800], 1000, function(v){
 			box.style.left = v + "px";
 		}, function(){
 			box.stop = move.collision([box.offsetLeft, 0], 1000, function(v){
 				box.style.left = v + "px";
-			}, function(){
-				box.stop();
 			})
 		});
 	}
