@@ -42,7 +42,10 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	},
 	
 	elastic: function(range, time, fn, fnEnd){
@@ -74,7 +77,10 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	},
 
 	linear: function(range, time, fn, fnEnd){
@@ -100,7 +106,10 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	},
 
 	easeIn: function(range, time, fn, fnEnd){
@@ -128,7 +137,10 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	},
 
 	//easeOut动画(初速度较大, 一直减速)
@@ -161,7 +173,10 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	},
 
 	//ease动画(先加速后减速)
@@ -195,6 +210,9 @@ var move = {
 			}
 			else fn(res);
 		}, interval);
-		return true;
+		return function(){
+			clearInterval(timer);
+			delete this.stop;
+		};
 	}
 }

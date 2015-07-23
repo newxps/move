@@ -20,7 +20,7 @@ collision ------ 碰撞动画
 ###使用方法 
 直接调用 move中对应的方法即可, 例如
 ```
-var box = document.getElementById("#box");
+var box = document.getElementById("box");
 
 move.collision([0, 500], 1000, function(v){
 	box.style.left = v + 'px';
@@ -33,8 +33,8 @@ move.collision([0, 500], 1000, function(v){
 
 ####特殊情况1: 对一个或多个dom元素的多个属性进行过渡
 ```
-var box = document.getElementById("#box");
-var box2 = document.getElementById("#box2");
+var box = document.getElementById("box");
+var box2 = document.getElementById("box2");
 
 move.ease([0, 1], 1000, function(v){
 	box.style.left = 500 + 300*v + 'px';	//从500过渡到800
@@ -55,19 +55,48 @@ move.ease([0, 1], 1000, function(v){
 在一个动画还未完成的时候, 再次执行同样的动画, 会出现乱跑的问题. 
 可以这样解决:
 ```
-var box = document.getElementById("#box");
+var box = document.getElementById("box");
 
 document.onclick = function(){
-	if(box.running) return;
-	box.running = move.ease([0, 500], 1000, function(v){
+	if(box.stop) return;
+	box.stop = move.ease([0, 500], 1000, function(v){
 		box.style.left = v + 'px';
 	}, function(){
-		box.running = false;
+		box.stop = false;
 	})
 }
 ```
 上面的代码执行之后, 疯狂点击document则不会出现问题了.
-代码中给执行的dom元素添加一个running属性, 因为move的方法返回的都是true, 代表动画正在执行, 当动画执行完成之后的回调函数设置```box.running = false```, 设置running属性是false,表示动画完成, 在一次动画尚未完成的时候, 再次点击的话, running属性始终是true, 则不起作用
+代码中给执行的dom元素添加一个running属性, 因为move的方法返回的都是一个函数,执行这个函数则会停止动画 ,  当动画执行完成之后的回调函数设置```box.running = false```, 设置running属性是false,表示动画完成, 在一次动画尚未完成的时候, 再次点击的话, running属性始终是true, 则不起作用
+
+####特殊情况3: 停止正在执行的动画
+因为执行所有动画方法都是返回一个函数, 执行这个函数会停止动画. 于是将此函数存放在box.stop, 如果函数存在, 则说明动画正在进行, 如果函数执行之后会删除自身,动画停止, 因此可以直接判断是否动画是否结束, 防止多次点击  
+见test文件夹中stop.html
+```
+<input type="button" value="start" id="btn" style="width:50px;height:30px">
+<div id="box" style="width:50px; height:50px; background:#f70; position:absolute; top:200px;"></div>
+
+<script>
+	var btn = document.getElementById("btn");
+	var box = document.getElementById("box");
+
+	btn.onclick = function(){
+		if(box.stop) return;
+		box.stop = move.ease([box.offsetLeft, 800], 1000, function(v){
+			box.style.left = v + "px";
+		}, function(){
+			box.stop = move.collision([box.offsetLeft, 0], 1000, function(v){
+				box.style.left = v + "px";
+			}, function(){
+				box.stop();
+			})
+		});
+	}
+	btn.onmouseout = function(){
+		if(box.stop) box.stop();
+	}
+</script>
+```
 
 
 ###许可协议

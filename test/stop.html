@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="../move.min.js"></script>
+</head>
+<body>
+	<input type="button" value="start" id="btn" style="width:50px;height:30px">
+	<div id="box" style="width:50px; height:50px; background:#f70; position:absolute; top:200px;"></div>
+
+	<script>
+		var btn = document.getElementById("btn");
+		var box = document.getElementById("box");
+
+		btn.onclick = function(){
+			if(box.stop) return;
+			box.stop = move.ease([box.offsetLeft, 800], 1000, function(v){
+				box.style.left = v + "px";
+			}, function(){
+				box.stop = move.collision([box.offsetLeft, 0], 1000, function(v){
+					box.style.left = v + "px";
+				}, function(){
+					box.stop();
+				})
+			});
+		}
+		btn.onmouseout = function(){
+			if(box.stop) box.stop();
+		}
+	</script>
+</body>
+</html>
