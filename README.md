@@ -1,84 +1,77 @@
 # move.js
-===
-move.js 是一个js运动库, 它只会生成move一个全局变量. 
+=====
+move.js 是一个超轻量的js动画库, 它在被 ```window.move``` 引用. 优先使用 requestAnimationFrame
 
-注意: move.js中所有方法是万能的方法函数, 只要是含有数字的css样式皆可过渡, 如rotate, border等复杂属性, 直接获取到的css样式值不易提取数值进行过渡, 使用move.js可以解决, 因此move.js没有设计成傻瓜式的只直接传入包含终点值的字面量对象, 如```move.ease(element, {left: 800, top:600})```(错误用法)
+[demo看这里](https://flfwzgl.github.io/move)
 
-###安装方法
-直接引入```<script src="move.min.js" type="text/javascript"></script>```
 
-###动画种类(还在添加......)
-```
-linear --------- 匀速运动
-ease ----------- 先加速后减速
-easeIn --------- 初速度为0, 一直加速
-easeOut -------- 初速度较大, 一直减速
-elastic -------- 弹性动画(终点附近来回摆动)
-collision ------ 碰撞动画
-```
+=====
 
-###使用方法 
-直接调用 move中对应的方法即可, 例如
+####用法:
+`script标签直接引入`
+
+ move.js其实是一个数字的过渡函数库, 必须传入 一个包含两个数字的数组(如```[0, 2000]```), 一个回调函数```fn```, 时间不传则默认为500毫秒, 它会使用对应的动画曲线从0过渡到2000, 定时器每次会传入当前的过渡数字到fn中.  还可以选择性传入一个fnEnd, 作为动画完成之后的执行函数.
+
+#####注意: 上面的过渡数组```[0, 2000]```, 和```fn``` 必须传入, 时间和fnEnd可不传, 四个参数无顺序之分.
+
+从上可知, move.js 适用于任何包含数字的css属性的过渡, 比如box-shadow, border, transform, stroke等, 也就是字符串拼接这么简单.
+
+move.js经过几次重构, 之前是类似于jquery那样传入包含属性的对象, 如{left: 500, top: 30}, 因为这样虽然方便, 但不够强大. 
+`很多前面提到的数字和字母混合的CSS属性难以提取数字进行过渡, 索性直接实现一个数值过渡的库`.
+
+=====
+#### move下的API
+* ```linear``` --- 匀速运动
+* ```ease``` --- 先加速后减速
+* ```ease2``` --- 先加速一小段距离, 然后突然大提速, 最后减速
+* ```easeIn``` --- 初速度为0, 一直加速
+* ```easeOut``` --- 初速度较大, 一直减速
+* ```elastic``` --- 弹性动画(终点附近来回摆动)
+* ```collision``` --- 碰撞动画
+* ```wave``` --- 断断续续加速减速
+* ```opposite``` --- 先向反方向移动一小段距离, 然后正方向移动, 并超过终点一小段, 然后回到终点
+
+=====
+#### 例子:
 ```
 var box = document.getElementById("box");
 
-move.collision([0, 500], 1000, function(v){
+var stop = move.ease([0, 500], function(v){
 	box.style.left = v + 'px';
 }, function(){
 	alert('动画完成');
 });
 ```
-上面例子中调用的collision碰撞动画(其他动画同理), ```box```是要操作的dom元素, ```[0, 500]```代表从0过渡到500, 使用碰撞曲线过渡, 然后第二个参数是1000ms时间, 每次定时器执行会传入一个当前过渡值到第三个参数回调函数中,
-最后一个参数是动画完成之后执行的回调函数(可不传).
+上面例子中调用的 ease动画(其他动画同理), ```box```是要操作的dom元素, ```[0, 500]```代表从0过渡到500, 使用ease曲线过渡, 每次定时器执行会传入一个当前过渡值到第三个参数回调函数中, 执行```move.ease```的时候会返回一个函数放在```stop```变量, 执行```stop```函数会停止正在执行的动画, ```stop``` h会返回当前过渡值, 以便下次继续.
 
-####特殊情况1: 对一个或多个dom元素的多个属性进行过渡
+#### 为什么不使用链式操作?
+从上面例子可知, 要想使用多种动画一次执行, 必须放入```fnEnd```函数中而不像jQuery那样使用链式操作将动画放入队列中, 原因如下:
+
+* 若要使用链式操作, 必须使用动画队列. 每次执行完动画方法后需要返回 move 对象, 但 move 对象内部不包含 DOM 节点, 不易于将事件队列和 DOM 节点进行绑定, 所以同时执行多个 move 的方法, 动画队列不易区分. 
+* jquery是直接对DOM节点操作(他可以把对应的动画队列绑定到节点上)且每次执行完会返回一个新对象. 但 move 不返回新对象.
+* move 只是一个包含多种过渡动画的函数库(对象), 只负责数值之间各种过渡, 剩下的交给我们在```fn```中自由发挥
+
+#### 添加新动画?
+move.js 可以很方便地添加新动画, 操作如下:
 ```
-var box = document.getElementById("box");
-var box2 = document.getElementById("box2");
-
-move.ease([0, 1], 1000, function(v){
-	box.style.left = 500 + 300*v + 'px';	//从500过渡到800
-	box.style.top = 800 + -300*v + 'px';	//从800过渡到500
-	box2.style.border = 50*v + 'px solid #000';	//border宽度从0到50过渡
-}, function(){
-	move.collision([1, 0], 1000, function(v){
-		box.style.opacity = v;
-		box.style.filter = 'alpha(opacity='+ v*100 +')';	//兼容ie低版本
-	}, function(){
-		alert('动画完成');
-	})
-});
-```
-上面代码中第一次move.ease中是从0到1的过渡, 可以理解为是动画完成的比例, 因此回调函数中不同元素的不同属性利用百分比可以做出想要的过渡. 然后在第一个动画结束后的回调函数中执行了第二个move.collision的动画, 在第二次执行完之后执行```alert('动画完成');```
-
-
-####特殊情况2: 停止正在执行的动画
-因为执行所有动画方法都是返回一个函数, 执行这个函数会停止动画. 于是将此函数存放在box.stop, 如果函数存在, 则说明动画正在进行, 如果函数执行之后会删除自身,动画停止, 因此可以直接判断是否动画是否结束, 防止多次点击出现闪烁  
-见test文件夹中stop.html
-```
-<input type="button" value="start" id="btn" style="width:50px;height:30px">
-<div id="box" style="width:50px; height:50px; background:#f70; position:absolute; top:200px;"></div>
-
-<script>
-	var btn = document.getElementById("btn");
-	var box = document.getElementById("box");
-
-	btn.onmouseover = function(){
-		if(box.stop) box.stop();
-		box.stop = move.ease([box.offsetLeft, 800], 1000, function(v){
-			box.style.left = v + "px";
-		}, function(){
-			box.stop = move.collision([box.offsetLeft, 0], 1000, function(v){
-				box.style.left = v + "px";
-			})
-		});
+move.extend({
+	fast: function(x){
+		return x*x*x;
 	}
-	btn.onmouseout = function(){
-		if(box.stop) box.stop();
-	}
-</script>
+})
 ```
+上面传入的```fast```函数是一个动画曲线函数, 调用时会自动传入一个自变量```x```, 范围在```0```到```1```, 返回的值y的值域也最好在```0```到```1```, 如果动画结束, 会强行设置```y```为```1```.
+
+然后就可以欢快地使用 ```move.example([from, to], function(){ ... })``` 开始啪啪啪了......
+
+=====
+####许可协议
+MIT
 
 
-###许可协议
-基于 MIT 协议, 任何用途(包括商用)皆可, [LICENSE](https://github.com/flfwzgl/move.js/blob/master/LICENSE)
+
+
+
+
+
+

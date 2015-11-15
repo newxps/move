@@ -1,6 +1,11 @@
-/* move.js
- * @author:flfwzgl https://github.com/flfwzgl
- * @copyright: MIT license */
+
+
+/*
+
+======================  老代码, 仅供观赏  =========================
+
+*/
+
 var move = {
 	css: function(obj, attr){
 		if( typeof attr === "string" ){
@@ -248,3 +253,85 @@ var move = {
 		return true;
 	}
 }
+
+
+ 
+!function(){
+	//动画对象模块
+	var Move = function(){};
+
+	Move.prototype = {
+		ease: function(range, duration, fn, fnEnd){
+			if(!fn) return;
+
+			var fromTime = +new Date,
+					duration = duration || 500,
+					curTime,
+					x = 0,
+					y,
+					a = range[0],
+					b = range[1];
+
+			var self = this;
+			var timer = 't' + Math.random();
+			
+			self[timer] = {};
+
+			_move(function(){
+				curTime = +new Date;
+				x = (curTime - fromTime)/duration;
+
+				y = _ease(x);
+
+				if(y === 1 && curTime >= fromTime + duration){
+					//动画结束
+					fn(b);
+					if(fnEnd) fnEnd();
+					return true;
+				} else {
+					fn(a + (b - a) * y);
+				}
+
+			}, self[timer]);
+
+			return function(){
+				_stopMove(self[timer]);
+				return y;
+			}
+		}
+	}
+
+	//兼容setInterval, requestAnimationFrame
+	function _move(fn, timer){
+		var step;
+		try {
+			console.log('this is requestAnimationFrame')
+			step = function(){
+				if(!fn()) timer.id = window.requestAnimationFrame(step);
+			}
+			step();
+		} catch(e) {
+			console.log('this is setInterval')			
+			timer.id = setInterval(fn, 16);
+		}
+	}
+
+	//停止动画
+	function _stopMove(timer){
+		try{
+			window.cancelAnimationFrame(timer.id);
+		} catch(e) {
+			clearInterval(timer.id);
+		}
+	}
+
+	/*动画曲线*/
+	//定义域和值域均为[0, 1], 传入自变量x返回对应值y
+	function _ease(x){
+		if(x <= 0.5) return 2 * x * x;
+		else if(x > 0.5 && x <= 1) return -2 * x * x + 4 * x - 1;
+		else return 1;
+	}
+
+	return new Move;
+}()
