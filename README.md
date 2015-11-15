@@ -31,6 +31,8 @@ move.js经过几次重构, 之前是类似于jquery那样传入包含属性的�
 	wave 		--- 断断续续加速减速
 	opposite 	--- 先向反方向移动一小段距离, 然后正方向移动, 并超过终点一小段, 然后回到终点
 
+![curve](img/curve.jpg)
+
 =====
 #### 例子:
 ```javascript
