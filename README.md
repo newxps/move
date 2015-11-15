@@ -1,5 +1,5 @@
 # move.js
-=====
+
 move.js 是一个超轻量的js动画库, 它在被 ```window.move``` 引用. 优先使用 ```requestAnimationFrame```
 
 [demo看这里](https://flfwzgl.github.io/move/test/demo.html)
