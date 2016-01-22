@@ -35,9 +35,9 @@
   var request = window.requestAnimationFrame,
       stopRequest = window.cancelAnimationFrame
 
-
-  //初始化运动函数和停止函数
   var _move, _stopMove;
+
+  //初始化运动函数和停止函数  
   if(request) {
     _move = function(fn, timer){
       var step = function() {
