@@ -32,7 +32,39 @@
   window.move = new Move;
 
 
-  var request = window.requestAnimationFrame;
+  var request = window.requestAnimationFrame,
+      stopRequest = window.cancelAnimationFrame
+
+
+  //初始化运动函数和停止函数
+  var _move, _stopMove;
+  if(request) {
+    _move = function(fn, timer){
+      var step = function() {
+        if(!fn()) timer.id = request(step);
+      }
+      step();
+    }
+  } else {
+    _move = function(fn, timer) {
+      timer.id = setInterval(fn, 16);
+    }
+  }
+
+  if(stopRequest) {
+    _stopMove = function(timer) {
+      stopRequest(timer.id);
+    }
+  } else {
+    _stopMove = function(timer) {
+      clearInterval(timer.id);
+    }
+  }
+
+
+
+
+/* //由于 try catch 性能差
   //兼容setInterval, requestAnimationFrame
   function _move(fn, timer){
     var step;
@@ -44,16 +76,7 @@
     } catch(e) {
       timer.id = setInterval(fn, 16);
     }
-  }
-
-  //停止动画兼容函数
-  function _stopMove(timer){
-    try{
-      window.cancelAnimationFrame(timer.id);
-    } catch(e) {
-      clearInterval(timer.id);
-    }
-  }
+  }*/
 
   //开始动画函数
   function _doMove(arg, moveType){
