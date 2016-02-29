@@ -32,7 +32,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; })</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -49,7 +49,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -66,7 +66,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -83,7 +83,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -100,7 +100,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -117,7 +117,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -134,7 +134,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -151,7 +151,7 @@
 					<option value="2000">2000</option>
 					<option value="5000">5000</option>
 				</select>
-				, function(v){ box.style.left = v + "px"; }</i>
+				, v => box.style.left = `${v}px`)</i>
 			</div>
 		</div>
 
@@ -161,7 +161,7 @@
 			</div>
 			<div class="move-box">
 				<div class="moveObj" style="width:100px; background:#fd0;" ></div>
-				<i>move.linear([0, 20], 20000, function(v){ box.innerHTML = v.toFixed(3); })</i>
+				<i>move.linear([0, 20], 20000, v => box.innerHTML = v.toFixed(3) )</i>
 			</div>
 		</div>
 
