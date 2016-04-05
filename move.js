@@ -95,7 +95,7 @@
 
     var timer = 't' + Math.random();
 
-    self = this;
+    var self = this;
 
     //用于保存定时器ID的对象, requestAnimation递归调用必须传入对象
     this[timer] = {};
@@ -113,10 +113,10 @@
         y = moveType(x);
         fn(a + (b - a) * y);
       }
-    }, self[timer]);
+    var }, self[timer]);
     
     return function(){
-      _stopMove(self[timer]);
+      var _stopMove(self[timer]);
       return a + (b - a) * y;
     }
   }
