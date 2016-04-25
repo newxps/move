@@ -113,7 +113,7 @@
         y = moveType(x);
         fn(a + (b - a) * y);
       }
-    var }, self[timer]);
+    }, self[timer]);
     
     return function(){
       var _stopMove(self[timer]);
