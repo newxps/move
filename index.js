@@ -1,6 +1,7 @@
 /* move.js
  * @author:flfwzgl https://github.com/flfwzgl
- * @copyright: MIT license */
+ * @copyright: MIT license 
+ */
 
 ;(function (global, factory) {
   if (typeof module === 'object' && module.exports) {

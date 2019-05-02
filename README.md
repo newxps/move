@@ -29,7 +29,7 @@ Simple and powerful javascript transition library, you can use it to achieve DOM
 
 ### Installation
 ``` bash
-npm i -S transition-move
+npm i -S simple-move
 ```
 or
 ``` html
@@ -51,7 +51,7 @@ move.collision([0, 1000], 500, function (x) {
   alert('over!');
 });
 
-// stop move 100ms later
+// stop moving 100ms later
 setTimeout(_ => {
   stop();
 }, 100)
@@ -104,7 +104,7 @@ MIT
 
 ### 安装
 ``` bash
-npm i -S transition-move
+npm i -S simple-move
 ```
 或者
 ``` html
