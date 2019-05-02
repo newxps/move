@@ -4,7 +4,8 @@
 	<meta charset="UTF-8">
 	<title>move.js demo</title>
 	<link rel="stylesheet" href="css/demo.css">
-	<script src='../move.min.js'></script>
+	<script src='../index.js'></script>
+	<script src='./bezier.js'></script>
 </head>
 <body>
 	<div id="container">
@@ -155,6 +156,23 @@
 			</div>
 		</div>
 
+		<div class="kind">
+			<div class="start-box">
+				<input type="button" value="bezier动画曲线" title="bezier">
+			</div>
+			<div class="move-box">
+				<div class="moveObj" id="bezier-obj" style="background: #f70"></div>
+				bezier动画(自定义) <i>move.bezier([0, 800], 
+				<select>
+					<option value="500">500</option>
+					<option value="1000" selected>1000</option>
+					<option value="2000">2000</option>
+					<option value="5000">5000</option>
+				</select>
+				, v => box.style.left = `${v}px`)</i>
+			</div>
+		</div>
+
 		<div class="common kind">
 			<div class="start-box">
 				<input type="button" value="计数" title="count">
@@ -207,6 +225,7 @@
 			doMove(id('collision-obj'), 'collision');
 			doMove(id('wave-obj'), 'wave');
 			doMove(id('opposite-obj'), 'opposite');
+			doMove(id('bezier-obj'), 'bezier');
 		}
 
 		function getSelected(obj){
@@ -215,23 +234,29 @@
 		}
 
 
+		move.extend({
+			bezier: getBezierCurve([1, 0], [.5, 1])
+		})
+
+
 		document.onclick = function(e){
 			e = e||event;
 			e = e.target;
 			if(!e.title) return;
 			var temp = next(e.parentNode).getElementsByTagName('div')[0];
 			switch(e.title){
-				case "linear":
-				case "ease":
-				case "easeOut":
-				case "elastic":
-				case "collision":
-				case "wave":
-				case "opposite":
-				case "ease2":
+				case 'linear':
+				case 'ease':
+				case 'easeOut':
+				case 'elastic':
+				case 'collision':
+				case 'wave':
+				case 'opposite':
+				case 'ease2':
+				case 'bezier':
 					doMove(temp, e.title);
 					break;
-				case "count":
+				case 'count':
 					if(!e.counting){
 						e.counting = true;
 						if(temp.counting) return;
@@ -246,7 +271,7 @@
 						e.value = '开始';
 					}
 					break;
-				case "complex":
+				case 'complex':
 					if(temp.running) return;
 					temp.style.cssText = '';
 					temp.running = move.ease([0, 800], 500, function(v){

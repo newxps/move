@@ -1,0 +1,27 @@
+{
+  "name": "simple-move",
+  "version": "1.1",
+  "description": "Simple but powerful javascript transition library",
+  "main": "move.js",
+  "scripts": {
+    "eslint": "eslint index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flfwzgl/move.git"
+  },
+  "keywords": [
+    "animation",
+    "transition"
+  ],
+  "author": "flfwzgl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flfwzgl/move/issues"
+  },
+  "homepage": "https://github.com/flfwzgl/move#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0"
+  }
+}
