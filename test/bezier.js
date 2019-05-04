@@ -1,110 +1,179 @@
-function getBezierCurve (...args) {
-  if (args.length > 13)
-    throw new Error('最多允许13个控制点');
 
-  let points = [[0, 0], ...args, [1, 1]];
+function addBezierTo (opt = {}) {
+  let {
+    el,
+    points
+  } = opt;
 
-  let l = points.length
-    , segments = 500
-    , i = segments + 1 // n条线段总共n + 1个点
-    , xlist = Array(i)
-    , ylist = Array(i)
+  if (!(el instanceof Element)) throw new TypeError('opt.el must be an element!');
+  if (!Array.isArray(points)) throw new TypeError('opt.points must be an array!');
+  if (points.some(e => !(e && typeof e === 'object'))) throw new TypeError('opt.points must be composed entirely of objects!');
 
-  // 阶乘, 无需考虑大数, 限制控制点个数即可
-  const factorial = cached(function factorial (n) {
-    let res = 1;
-    for (let i = 1; i <= n; i++)
-      res *= i;
-    return res;
+  let width = el.offsetWidth;
+  let height = el.offsetHeight;
+
+  const x = d => d.x;
+  const y = d => d.y;
+  let padding = 110
+    , w = el.offsetWidth - padding * 2
+    , h = el.offsetHeight - padding * 2
+
+
+  let p = points;
+  points = points.map(e => {
+    return {
+      x: e.x * w,
+      y: h - e.y * h
+    }
   });
 
-  // 组合数
-  const combinatorial = cached(function combinatorial (n, m) {
-    if (m > n / 2) m = n - m;
-    if (m === 0) return 1;
-    if (m === 1) return n;
-    if (m === 2) return n * (n - 1) / 2;
-    if (m === 3) return n * (n - 1) * (n - 2) / 6;
+  let t = 1
+    , delta = .01
+    , bezier = {}
+    , line = d3.svg.line().x(x).y(y)
+    , l = points.length
+    , n = l - 1
+    , orders = d3.range(l, l + 1)
 
-    let i = n, j = m, res = 1;
-    while (j--)
-      res *= i--;
-    return res / factorial(m);
+  let svg = d3.select(el).selectAll('svg')
+      .data(orders)
+    .enter().append('svg:svg')
+      .attr('width', width)
+      .attr('height', height)
+    .append('svg:g')
+      .attr('transform', 'translate(' + padding + ',' + padding + ')');
+
+  update();
+
+  svg.selectAll('circle.control')
+      .data(d => points.slice(0, d))
+    .enter().append('svg:circle')
+      .attr('class', 'control')
+      .attr('r', (d, i) => {
+        // return i === 0 || i === points.length - 1 ? 3 : 3
+        return 3
+      })
+      .attr('style', (d, i) => {
+        return i === 0 || i === points.length - 1 ? 'fill: red; stroke: none' : 'fill: #fff; stroke: #20a0ff; stroke-width: 2px'
+      })
+      .attr('cx', x)
+      .attr('cy', y)
+      // .call(d3.behavior.drag()
+      //   .on('dragstart', function (d, i) {
+      //     this.__origin__ = [d.x, d.y];
+      //   })
+      //   .on('drag', function (d, i) {
+      //     d.x = Math.min(w, Math.max(0, this.__origin__[0] += d3.event.dx));
+      //     d.y = Math.min(h, Math.max(0, this.__origin__[1] += d3.event.dy));
+      //     bezier = {};
+      //     update();
+      //     svg.selectAll('circle.control')
+      //       .attr('cx', x)
+      //       .attr('cy', y);
+      //   })
+      //   .on('dragend', function () {
+      //     delete this.__origin__;
+      //   })
+      // );
+
+  svg.append('svg:text')
+    .attr('class', 't')
+    .attr('x', w / 2)
+    .attr('y', h)
+    .attr('text-anchor', 'middle');
+
+  svg.selectAll('text.controltext')
+      .data(d => points.slice(0, d))
+    .enter().append('svg:text')
+      .attr('class', 'controltext')
+      .attr('dx', (d, i) => {
+        let dx = p[i].dx;
+        return dx == null ? '-20px' : dx;
+      })
+      .attr('dy', (d, i) => {
+        let dy = p[i].dy;
+        return dy == null
+          ? p[i].y > .5 ? '-10px' : '20px'
+          : dy
+      })
+      .text((d, i) => `P${i}(${p[i].x},${p[i].y})`);
+
+  let last = 0;
+  d3.timer(elapsed => {
+    t = (t + (elapsed - last) / 5000) % 1;
+    last = elapsed;
+    update();
   });
 
-  while (i--)
-    setBezierPoint(i);
+  update();
 
-  return function bezier (x) {
-    if (points.length === 2) return x;
+  function update () {
+    let interpolation = svg.selectAll('g')
+        .data(d => getLevels(d, t));
+    interpolation.enter().append('svg:g')
+        .style('fill', colour)
+        .style('stroke', colour);
 
-    let i = getMaxIndex(x);
+    let circle = interpolation.selectAll('circle')
+        .data(Object);
+    circle.enter().append('svg:circle')
+        .attr('r', 2);
+    circle
+        .attr('cx', x)
+        .attr('cy', y);
 
-    if (i < 0) return ylist[0];
-    if (i >= segments) return ylist[segments];
+    let path = interpolation.selectAll('path')
+        .data(d => [d]);
+    path.enter().append('svg:path')
+        .attr('class', 'line')
+        .attr('d', line);
+    path.attr('d', line);
 
-    let from = ylist[i], to = ylist[i + 1];
+    let curve = svg.selectAll('path.curve')
+        .data(getCurve);
+    curve.enter().append('svg:path')
+        .attr('class', 'curve');
+    curve.attr('d', line);
 
-    return from + (to - from) * (x - xlist[i]);
+    svg.selectAll('text.controltext')
+        .attr('x', x)
+        .attr('y', y);
   }
 
-  // 二分查找x在 xlist例如[0, .02, .09, .22, ..., .99] 中哪个位置
-  // 返回小于等于x的最大数的index
-  function getMaxIndex (x) {
-    const len = xlist.length;
-    let left = 0, right = len - 1;
-    if (x >= xlist[right])
-      return right;
+  function interpolate (d, p) {
+    if (arguments.length < 2) p = t;
+    let r = [];
+    for (let i = 1; i < d.length; i++) {
+      let d0 = d[i-1], d1 = d[i];
+      r.push({x: d0.x + (d1.x - d0.x) * p, y: d0.y + (d1.y - d0.y) * p});
+    }
+    return r;
+  }
 
-    while (left < right - 1) {
-      let i = (left + right) / 2 | 0;
-      let middle = xlist[i];
-      if (x < middle) {
-        right = i;
-      } else if (x > middle) {
-        left = i;
-      } else {
-        return i;
+  function getLevels (d, tt) {
+    if (arguments.length < 2) tt = t;
+    let x = [points.slice(0, d)];
+    for (let i = 1; i < d; i++) {
+      x.push(interpolate(x[x.length - 1], tt));
+    }
+    return x;
+  }
+
+  function getCurve (d) {
+    let curve = bezier[d];
+    if (!curve) {
+      curve = bezier[d] = [];
+      for (let tt = 0; tt <= 1; tt += delta) {
+        let x = getLevels(d, tt);
+        curve.push(x[x.length - 1][0]);
       }
     }
-    return left;
+    return [curve.slice(0, t / delta + 1)];
   }
 
-  // 计算给定时间点曲线上的 (x, y) 并分别赋值到对应数组中
-  function setBezierPoint (index) {
-    if (index === 0) {
-      let p = points[0];
-      xlist[index] = p[0], ylist[index] = p[1];
-      return;
-    }
-
-    if (index === segments) {
-      let p = points[points.length - 1];
-      xlist[index] = p[0], ylist[index] = p[1];
-      return;
-    }
-
-    let x = 0, y = 0, tmp;
-    let t = index / segments, n = l - 1;
-    for (let i = 0; i <= n; i++) {
-      tmp = combinatorial(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
-
-      let [px, py] = points[i];
-      x += tmp * px;
-      y += tmp * py;
-    }
-
-    xlist[index] = x;
-    ylist[index] = y;
-  }
-
-  // 对传入fn的参数及执行之后的结果缓存
-  function cached (fn) {
-    const map = Object.create(null);
-    return function cache (...args) {
-      let key = args.join(',');
-      return map[key] || (map[key] = fn(...args));
-    }
+  function colour (d, i) {
+    return d.length > 1 ? ['#ccc', '#6b0', '#09c', '#a7d'][i] : 'red';
   }
 }
 
+document.body.addEventListener('touchmove', ev => ev.preventDefault());

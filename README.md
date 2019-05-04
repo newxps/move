@@ -3,8 +3,10 @@
 Simple and powerful javascript transition library, you can use it to achieve DOM or canvas animation, or any other number transitions you want
 
 
+[demo](https://demo.fanlinfeng.com/move.js---js%E5%8A%A8%E7%94%BB%E5%BA%93/)
+
 ### Features
-* Extending customized transition curves
+* Extending customized transition curves, including [bezier curves](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
 * Compitable with IE8(ES3)
 * Compitable with `CommonJS`, `AMD` and `browser`
 * Using `requestAnimationFrame` first
@@ -12,9 +14,6 @@ Simple and powerful javascript transition library, you can use it to achieve DOM
 <p align="center">
   <img src="img/curve.jpg" alt="curve" width="500"/>
 </p>
-
-
-[demo](https://flfwzgl.github.io/move/test/demo.html)
 
 ### api
 * linear
@@ -61,13 +60,13 @@ setTimeout(_ => {
 ### Add new transition curves
 ``` javascript
 move.extend({
-  fast: function (x) {
-    return x * x * x;
-  }
+  // extend a bezier curve, because the first and the last points are locked to (0,0), (1,1).
+  // so you can only pass other points than the first and last.
+  bezier: move.stdBezierCurve([1, 0], [.5, 1])  // actually the control points are (0, 0), (1, 0), (.5, 1), (1, 1)
 });
 ```
 
-Then you can use `move.fast([0, 1000], 500, x => box.style.left = x + 'px')` to animate elements;
+Then you can use `move.bezier([0, 1000], 500, x => box.style.left = x + 'px')` to animate elements;
 
 
 ### License
@@ -82,8 +81,10 @@ MIT
 
 简单但强大的js过渡函数库, 可以用来制作各种dom动画和canvas动画, 包含多种常用过渡曲线
 
+[demo](https://demo.fanlinfeng.com/move.js---js%E5%8A%A8%E7%94%BB%E5%BA%93/)
+
 ### 特性
-* 扩展自定义过渡曲线
+* 扩展自定义过渡曲线, 包括 [贝塞尔曲线](https://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A)
 * 兼容IE8
 * 兼容 `CommonJS`, `AMD` 和 浏览器
 * 优先使用 `requestAnimationFrame`, 低版本浏览器自动降级为 `setInterval`
@@ -142,14 +143,13 @@ setTimeout(_ => {
 move.js 可以很方便地添加新动画, 操作如下:
 ```javascript
 move.extend({
-  fast: function (x) {
-    return x * x * x;
-  }
-})
+  // 扩展贝塞尔曲线, 控制点为 (0, 0)、(1, 0)、(.5, 1)、(1, 1), 由于首尾控制点(0,0), (1,1)已锁定, 所以只需传入中间控制点即可
+  bezier: move.stdBezierCurve([1, 0], [.5, 1])
+});
 ```
 上面传入的```fast```函数是一个动画曲线函数, 调用时会自动传入一个自变量```x```, 范围在```0```到```1```, 返回的值y的值域也最好在```0```到```1```, 如果动画结束, 会强行设置```y```为```1```.
 
-然后就可以欢快地使用 `move.fast([from, to], function(){ ... })` 开始啪啪啪了......
+然后就可以欢快地使用 `move.bezier([from, to], function(){ ... })` 开始啪啪啪了......
 
 ### 许可协议
 MIT

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>move.js demo</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <header>
+    <h1 style="color: #20a0ff;">Move.js</h1>
+    <p style="text-align: center;">
+      简单但强大的 JavaScript 动画曲线过渡库, 无任何依赖&emsp;&emsp;<a href="https://github.com/flfwzgl/move" target="_blank">github</a>
+    </p>
+  </header>
+  <button id="start" class="btn btn-primary">开始动画</button>
+  <div id="container">
+    <hr>
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="linear">linear动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="linear-obj"></div>
+        <div class="dt">匀速动画</div>
+        <div class="dc">
+          <i class="code">move.linear([0, 800], 
+            <select>
+              <option value="500">500</option>
+              <option value="800">800</option>
+              <option value="1000" selected>1000</option>
+              <option value="2000">2000</option>
+              <option value="5000">5000</option>
+            </select>
+            , v => `translate3d(${v}px, 0, 0)`)
+          </i>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="ease">ease动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="ease-obj"></div>
+        <div class="dt">先加速后减速的动画</div>
+        <div class="dc">
+           <i class="code">move.ease([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="ease2">ease2动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="ease2-obj"></div>
+        <div class="dt">ease2动画</div>
+        <div class="dc">
+           <i class="code">move.ease2([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="bezier">bezier动画曲线</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="bezier-obj"></div>
+        <div class="dt">控制点: (0, 0)、(1, 0)、(.5, 1)、(1, 1)</div>
+        <div class="dc">
+          <i class="code">move.bezier([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <div class="fit">
+      <div class="bezier-container" id="bezier-curve"></div>
+      <div class="code-example">
+        <pre><code>// 需手动添加, 首尾控制点(0,0)和(1,1)已锁定, 传入中间控制点坐标即可
+move.extend({
+  bezier: move.stdBezierCurve([1, 0], [.5, 1])
+});
+
+move.bezier([0, 800], v => {
+  /*do something...*/
+});</code></pre>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="bezier2">bezier2动画曲线</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="bezier2-obj"></div>
+        <div class="dt">控制点: (0, 0)、(.5, -.5)、(0, 1)、(1, 1)</div>
+        <div class="dc">
+          <i class="code">move.bezier2([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <div class="fit">
+      <div class="bezier-container" id="bezier-curve2"></div>
+      <div class="code-example">
+        <pre><code>// 需手动添加
+move.extend({
+  bezier2: move.stdBezierCurve([.5, -.5], [0, 1])
+});
+
+move.bezier2([0, 800], v => {
+  /*do something...*/
+});</code></pre>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="bezier3">bezier3动画曲线</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="bezier3-obj"></div>
+        <div class="dt" style="font-size: 12px">控制点: (0, 0)、(.4, 1.5)、(.6, -1)、(.8, 1.5)、(1, 1)</div>
+        <div class="dc">
+          <i class="code">move.bezier3([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <div class="fit">
+      <div class="bezier-container" id="bezier-curve3"></div>
+      <div class="code-example">
+        <pre><code>// 需手动添加
+move.extend({
+  bezier3: move.stdBezierCurve([.4, 1.5], [.6, -1], [.8, 1.5])
+});
+
+move.bezier3([0, 800], v => {
+  /*do something...*/
+});</code></pre>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="easeOut">easeOut动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="easeOut-obj"></div>
+        <div class="dt">初速度较大, 一直减速</div>
+        <div class="dc">
+           <i class="code">move.easeOut([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="elastic">elastic动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="elastic-obj"></div>
+        <div class="dt">弹性动画</div>
+        <div class="dc">
+          <i class="code">move.elastic([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="collision">collision动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="collision-obj"></div>
+        <div class="dt">碰撞动画</div>
+        <div class="dc">
+          <i class="code">move.collision([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="wave">wave动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="wave-obj"></div>
+        <div class="dt">wave动画</div>
+        <div class="dc">
+          <i class="code">move.wave([0, 800], 
+            <select>
+              <option value="500">500</option>
+              <option value="800">800</option>
+              <option value="1000" selected>1000</option>
+              <option value="2000">2000</option>
+              <option value="5000">5000</option>
+            </select>
+            , v => `translate3d(${v}px, 0, 0)`)
+          </i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="opposite">opposite动画</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj" id="opposite-obj"></div>
+        <div class="dt">opposite动画</div>
+        <div class="dc">
+          <i class="code">move.opposite([0, 800], 
+          <select>
+            <option value="500">500</option>
+            <option value="800">800</option>
+            <option value="1000" selected>1000</option>
+            <option value="2000">2000</option>
+            <option value="5000">5000</option>
+          </select>
+          , v => `translate3d(${v}px, 0, 0)`)</i>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="common kind">
+      <div class="start-box">
+        <button class="btn btn-primary" title="count">计数</button>
+      </div>
+      <div class="move-box">
+        <div class="move-obj"></div>
+        <i class="code">move.linear([0, 20], 20000, v => box.innerHTML = v.toFixed(2) )</i>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <script src='../index.js'></script>
+  <script src='https://unpkg.com/d3@3.4.3/d3.min.js'></script>
+  <script src='./bezier.js'></script>
+  <script src="https://flfwzgl.github.io/tjs/test/asset/fork.min.js" data-target="https://github.com/flfwzgl/move"></script>
+  <script>
+    function id(ID){
+      return document.getElementById(ID);
+    }
+
+    function next(obj){
+      return obj.nextSibling.nodeType === 1 ? obj.nextSibling : obj.nextSibling.nextSibling;
+    }
+
+    function prev(obj){
+      return obj.previousSibling.nodeType === 1 ? obj.previousSibling : obj.previousSibling.nexgSibling;
+    }
+
+    id("start").onclick = function(){
+      doMove(id('linear-obj'), 'linear');
+      doMove(id('ease-obj'), 'ease');
+      doMove(id('ease2-obj'), 'ease2');
+      doMove(id('easeOut-obj'), 'easeOut');
+      doMove(id('elastic-obj'), 'elastic');
+      doMove(id('collision-obj'), 'collision');
+      doMove(id('wave-obj'), 'wave');
+      doMove(id('opposite-obj'), 'opposite');
+      doMove(id('bezier-obj'), 'bezier');
+      doMove(id('bezier2-obj'), 'bezier2');
+      doMove(id('bezier3-obj'), 'bezier3');
+    }
+
+    function getSelected(obj){
+      var obj = obj.parentNode.parentNode.getElementsByTagName('select')[0];
+      return +obj.options[obj.selectedIndex].value;
+    }
+
+
+    move.extend({
+      bezier: move.stdBezierCurve([1, 0], [.5, 1]),
+      bezier2: move.stdBezierCurve([.5, -.5], [0, 1]),
+      bezier3: move.stdBezierCurve([.5, 1.5], [.5, -1], [.6, 1.5]),
+    });
+
+
+    document.onclick = function (e) {
+      e = e||event;
+      e = e.target;
+      if(!e.title) return;
+      var temp = next(e.parentNode).getElementsByTagName('div')[0];
+      switch (e.title) {
+        case 'count':
+          if (!e.counting) {
+            e.counting = true;
+            if(temp.counting) return;
+            temp.innerHTML = '';
+            e.textContent = '暂停';
+            e.stop = move.linear([e.last || 0, 20], 20000, v => temp.textContent = v.toFixed(2), _ => {
+              e.last = 0, e.counting = false
+            });
+          } else {
+            e.counting = false;
+            e.last = e.stop();
+            e.textContent = '开始';
+          }
+          break;
+        default:
+          doMove(temp, e.title);
+      }
+    }
+
+
+    function doMove (obj, type) {
+      var t = +getSelected(obj);
+      move[type]([0, 800], t, v => obj.style.transform = `translate3d(${v}px, 0, 0)`);
+    }
+  </script>
+
+  <script>
+    addBezierTo({
+      el: document.getElementById('bezier-curve'),
+      points: [{
+        x: 0, y: 0
+      }, {
+        x: 1, y: 0
+      }, {
+        x: .5, y: 1, dx: -30
+      }, {
+        x: 1, y: 1, dx: -10
+      }]
+    });
+
+    addBezierTo({
+      el: document.getElementById('bezier-curve2'),
+      points: [{
+        x: 0, y: 0, dx: -30, dy: -10
+      }, {
+        x: .5, y: -.5
+      }, {
+        x: 0, y: 1
+      }, {
+        x: 1, y: 1
+      }]
+    });
+
+
+    addBezierTo({
+      el: document.getElementById('bezier-curve3'),
+      points: [{
+        x: 0, y: 0
+      }, {
+        x: .4, y: 1.5, dx: -40
+      }, {
+        x: .6, y: -1, dx: 10, dy: 0
+      }, {
+        x: .8, y: 1.5, dx: 0,
+      }, {
+        x: 1, y: 1, dx: 10, dy: 0
+      }]
+    });
+
+
+    // document.querySelectorAll('pre code').forEach((block) => {
+    //   hljs.highlightBlock(block);
+    // });
+
+  </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-/* move.js
+/* 
+ * move.js
  * @author:flfwzgl https://github.com/flfwzgl
  * @copyright: MIT license 
  */
@@ -17,6 +18,8 @@
     , stopRequest = window.cancelAnimationFrame
     , interval
     , stopInterval
+    , slice = [].slice
+    , toStr = ({}).toString
 
   interval = request
     ? function (fn, timer) {
@@ -39,14 +42,22 @@
 
   function is (type) {
     return function (e) {
-      return Object.prototype.toString.call(e) === '[object ' + type + ']';
+      return toStr.call(e) === '[object ' + type + ']';
     }
   }
 
-  var isArr = is('Array');
-  var isObj = is('Object');
+  function each (arr, fn) {
+    // if (!isArr(arr)) throw new TypeError('arr must be an array!');
+    if (typeof fn !== 'function') return;
+    for (var i = 0, l = arr.length; i < l; i++) {
+      fn.call(arr, arr[i], i, arr);
+    }
+  }
 
-  function getAnimation (stFn) {
+  var isArr = is('Array')
+    , isObj = is('Object')
+
+  function getAnimateFn (stFn) {
     if (typeof stFn !== 'function')
       throw new TypeError('stFn must be a function, and must return a number of 0-1');
 
@@ -112,12 +123,149 @@
     }
   }
 
+
+  // 对传入fn的参数及执行之后的结果缓存
+  function cached (fn) {
+    var map = {};
+    return function cache () {
+      var args = slice.call(arguments);
+      var key = args.join(',');
+      return map[key] || (map[key] = fn.apply(null, args));
+    }
+  }
+
+  function bezierCurve () {
+    var args = slice.call(arguments);
+
+    if (args.length > 10)
+      throw new Error('The number of control points must be less than 10!');
+
+    each(args, function (e, i) {
+      if (!isArr(e))
+        throw TypeError('arguments['+ i +'] must be an array!');
+
+      if (typeof e[0] !== 'number')
+        throw TypeError('arguments['+ i +'][0] must be a number!');
+
+      if (typeof e[1] !== 'number')
+        throw TypeError('arguments['+ i +'][1] must be a number!');
+    });
+
+    var points = args;
+
+    var l = points.length
+      , segments = 500
+      , i = segments + 1 // n条线段总共n + 1个点
+      , xlist = Array(i)
+      , ylist = Array(i)
+
+    // 阶乘, 无需考虑大数, 限制控制点个数即可
+    var factorial = cached(function factorial (n) {
+      var res = 1;
+      for (var i = 1; i <= n; i++)
+        res *= i;
+      return res;
+    });
+
+    // 组合数
+    var combinatorial = cached(function combinatorial (n, m) {
+      if (m > n / 2) m = n - m;
+      if (m === 0) return 1;
+      if (m === 1) return n;
+      if (m === 2) return n * (n - 1) / 2;
+      if (m === 3) return n * (n - 1) * (n - 2) / 6;
+
+      var i = n, j = m, res = 1;
+      while (j--)
+        res *= i--;
+      return res / factorial(m);
+    });
+
+    while (i--)
+      setBezierPoint(i);
+
+    return function bezier (x) {
+      if (points.length === 2) return x;
+
+      var i = getMaxIndex(x);
+
+      if (i < 0) return ylist[0];
+      if (i >= segments) return ylist[segments];
+
+      var from = ylist[i], to = ylist[i + 1];
+
+      return from + (to - from) * (x - xlist[i]);
+    }
+
+    // 二分查找x在 xlist例如[0, .02, .09, .22, ..., .99] 中哪个位置
+    // 返回小于等于x的最大数的index
+    function getMaxIndex (x) {
+      var len = xlist.length;
+      var left = 0, right = len - 1;
+      if (x >= xlist[right])
+        return right;
+
+      while (left < right - 1) {
+        var i = (left + right) / 2 | 0;
+        var middle = xlist[i];
+        if (x < middle) {
+          right = i;
+        } else if (x > middle) {
+          left = i;
+        } else {
+          return i;
+        }
+      }
+      return left;
+    }
+
+    // 计算给定时间点曲线上的 (x, y) 并分别赋值到对应数组中
+    function setBezierPoint (index) {
+      var p;
+      if (index === 0) {
+        p = points[0];
+        xlist[index] = p[0], ylist[index] = p[1];
+        return;
+      }
+
+      if (index === segments) {
+        p = points[points.length - 1];
+        xlist[index] = p[0], ylist[index] = p[1];
+        return;
+      }
+
+      var x = 0, y = 0, tmp;
+      var t = index / segments, n = l - 1;
+      for (var i = 0; i <= n; i++) {
+        tmp = combinatorial(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
+
+        var px = points[i][0];
+        var py = points[i][1];
+        x += tmp * px;
+        y += tmp * py;
+      }
+
+      xlist[index] = x;
+      ylist[index] = y;
+    }
+  }
+
+
+
   var Move = function () {
     if (!(this instanceof Move)) return new Move();
     initMove(this);
   }
+  var curve = Move.prototype;
 
-  Move.prototype.extend = function (obj) {
+  // 标准bezier, 首尾控制点锁定 (0, 0), (1, 1)
+  curve.stdBezierCurve = function () {
+    var args = slice.call(arguments);
+    return bezierCurve.apply(null, [[0, 0]].concat(args, [[1, 1]]));
+  };
+
+  curve.bezierCurve = bezierCurve;
+  curve.extend = function (obj) {
     if (!isObj(obj))
       throw new TypeError('obj must an Object!');
 
@@ -132,18 +280,20 @@
       if (typeof fn !== 'function')
         throw new TypeError('obj.' + name + ' must be a function!');
 
-      this[name] = getAnimation(fn);
+      this[name] = getAnimateFn(fn);
     }
+    return this;
   }
 
-  var PI = Math.PI
-    , sin = Math.sin
-    , cos = Math.cos
-    , pow = Math.pow
-    , abs = Math.abs
-    , sqrt = Math.sqrt
 
   var initMove = function (self) {
+    var PI = Math.PI
+      , sin = Math.sin
+      , cos = Math.cos
+      , pow = Math.pow
+      , abs = Math.abs
+      , sqrt = Math.sqrt
+
     self.extend({
       ease: function (x) {
         return x <= .5
@@ -163,9 +313,7 @@
       },
 
       // 初速度较大, 一直减速, 缓冲动画
-      easeOut: function (x) {
-        return pow(x, 0.8);
-      },
+      easeOut: self.stdBezierCurve([.5, 1]),
 
       // 碰撞动画
       collision: function (x) {
@@ -173,7 +321,7 @@
         for (var i = 1, m = 20; i < m; i++) {
           a = 1 - (4 / 3) * pow(.5, i - 1);
           b = 1 - (4 / 3) * pow(.5, i);
-          if (x >= a && x <= b ) {
+          if (x >= a && x <= b) {
             return pow(3 * (x - (a + b) / 2), 2) + 1 - pow(.25, i - 1);
           }
         }

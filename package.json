@@ -1,6 +1,6 @@
 {
   "name": "simple-move",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Simple but powerful javascript transition library",
   "main": "move.js",
   "scripts": {
