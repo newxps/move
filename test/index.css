@@ -261,11 +261,17 @@ button:focus {
 
 
 pre {
+	width: 600px;
+	overflow: auto;
 	background: #eee;
 	color: #666;
 	padding: 10px;
+	margin: 0;
 	/*position: absolute;*/
 	border-radius: 5px;
+}
+code {
+	font-size: 12px;
 }
 
 .fit:after {
@@ -276,6 +282,17 @@ pre {
 	visibility: none;
 }
 
+.fc {
+	display: flex;
+	-webkit-display: flex;
+
+	justify-content: center;
+	-webkit-justify-content: center;
+
+	align-items: center;
+	-webkit-align-items: center;
+}
+
 .bezier-container {
 	position: relative;
 	float: left;
@@ -284,8 +301,8 @@ pre {
 	height: 300px;
 }
 
-.code-example {
-	margin-left: 300px;
+.code-block {
+	/*margin-left: 300px;*/
 	padding: .1px 0;
 }
 
