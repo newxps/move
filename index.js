@@ -13,13 +13,22 @@
     global.move = factory();
   }
 })(typeof window === 'object' ? window : this, function () {
-  var T = 1000 / 60
-    , request = window.requestAnimationFrame
+  var request = window.requestAnimationFrame
     , stopRequest = window.cancelAnimationFrame
     , interval
     , stopInterval
     , slice = [].slice
     , toStr = ({}).toString
+    , PI = Math.PI
+    , sin = Math.sin
+    , cos = Math.cos
+    , pow = Math.pow
+    , abs = Math.abs
+    , sqrt = Math.sqrt
+    , ceil = Math.ceil
+    , floor = Math.floor
+
+  var T = 1000 / 60;
 
   interval = request
     ? function (fn, timer) {
@@ -97,7 +106,7 @@
       if (start === end)
         return fnEnd && fnEnd();
 
-      var total = Math.ceil(t / T)
+      var total = ceil(t / T)
         , i = 0
         , val
         , percentage
@@ -237,7 +246,7 @@
       var x = 0, y = 0, tmp;
       var t = index / segments, n = l - 1;
       for (var i = 0; i <= n; i++) {
-        tmp = combinatorial(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
+        tmp = combinatorial(n, i) * pow(1 - t, n - i) * pow(t, i);
 
         var px = points[i][0];
         var py = points[i][1];
@@ -287,13 +296,6 @@
 
 
   var initMove = function (self) {
-    var PI = Math.PI
-      , sin = Math.sin
-      , cos = Math.cos
-      , pow = Math.pow
-      , abs = Math.abs
-      , sqrt = Math.sqrt
-
     self.extend({
       ease: function (x) {
         return x <= .5

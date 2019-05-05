@@ -37,8 +37,10 @@ or
 
 ### Usage
 ``` javascript
-move.collision([from, to], time, callback, fnEnd);
+move.collision([from, to], time?, callback, fnEnd?);
 ```
+
+`time` default `500ms`
 
 #### Examples
 ``` javascript
@@ -114,8 +116,10 @@ npm i -S simple-move
 
 ### 用法
 ``` javascript
-move.collision([from, to], time, callback, fnEnd);
+move.collision([from, to], time?, callback, fnEnd?);
 ```
+
+`time` 不传默认 `500ms`
 
 #### 例子
 ``` javascript
